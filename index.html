@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <title>Convert Images to PDF</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    <style>.button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #3498db;
+        color: #ffffff;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+      }
+      
+      .button:hover {
+        background-color: #2980b9;
+      }
+      </style>
 </head>
 <body>
     <h1>Upload Images to Convert to PDF</h1>
@@ -14,13 +29,13 @@
         document.getElementById('download-pdf').addEventListener('click', async function () {
             const input = document.getElementById('image-input');
             if (input.files && input.files.length) {
-                const pdf = new jspdf.jsPDF({
-                    orientation: 'p',
-                    unit: 'mm',
-                    format: 'a4'
-                });
-                
                 for (let i = 0; i < input.files.length; i++) {
+                    const pdf = new jspdf.jsPDF({
+                        orientation: 'p',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
+
                     const file = input.files[i];
                     const imgUrl = await readFileAsDataURL(file);
                     const img = await loadImage(imgUrl);
@@ -30,12 +45,11 @@
                     const pdfHeight = pdf.internal.pageSize.getHeight();
                     const imgWidth = pdfWidth;
                     const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
-                    
-                    if (i > 0) pdf.addPage();
-                    pdf.addImage(img, 'JPEG', 0, 0, imgWidth, imgHeight, null, 'NONE');
-                }
 
-                pdf.save('download.pdf');
+                    pdf.addImage(img, 'JPEG', 0, 0, imgWidth, imgHeight, null, 'NONE');
+
+                    pdf.save(`download${i}.pdf`);
+                }
             }
         });
 
